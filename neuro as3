@@ -2,9 +2,9 @@ import numpy as np
 
 words = ['my', 'name', 'is', 'aly']
 w_i = {word: i for i, word in enumerate(words)}
-i_w = {i: word for word, i in word_to_idx.items()}
-input_seq = np.array([w_i['my'], w_i['name'], w_i['is']])
-target_idx = w_i['aly']
+i_w = {i: word for word, i in w_i.items()}
+input = np.array([w_i['my'], w_i['name'], w_i['is']])
+target = w_i['aly']
 vocab_size = len(words)
 embed_size = 8
 hidden_size = 16
@@ -21,14 +21,14 @@ def softmax(x):
 def cross_entropy(preds, label):
     return -np.log(preds[0, label])
 learning_rate = 0.1
-for ep in range(450):  # عدد الايبوك
+for ep in range(450):
     h = np.zeros((1, hidden_size))
     for i in input_seq:
         x = embedding[i].reshape(1, -1)
         h = np.tanh(np.dot(x, Wxh) + np.dot(h, Whh) + bh)
     y = np.dot(h, Why) + by
     probs = softmax(y)
-    loss = cross_entropy(probs, target_idx)
+    loss = cross_entropy(probs, target)
     dy = probs.copy()
     dy[0, target_idx] -= 1
     dWhy = np.dot(h.T, dy)
@@ -38,7 +38,7 @@ for ep in range(450):  # عدد الايبوك
     dWhh = np.zeros_like(Whh)
     dbh = np.zeros_like(bh)
     prev_h = np.zeros((1, hidden_size))
-    for i in input_seq:
+    for i in input:
         x = embedding[i].reshape(1, -1)
         dWxh += np.dot(x.T, dh)
         dWhh += np.dot(prev_h.T, dh)
